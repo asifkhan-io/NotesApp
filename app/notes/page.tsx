@@ -9,8 +9,7 @@ async function NotesContent({
 }) {
   const { important } = await searchParams;
   const showImportant = important === "true";
-  const allNotes = getNotes();
-  
+  const allNotes = await getNotes();
   const notes = showImportant
     ? allNotes.filter((note) => note.important)
     : allNotes;
@@ -35,7 +34,7 @@ async function NotesContent({
   );
 }
 
-export default function NotesPage({
+export default async function NotesPage({
   searchParams,
 }: {
   searchParams: Promise<{ important?: string }>;

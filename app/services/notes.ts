@@ -1,26 +1,33 @@
-export type Note = { id: number; content: string; important: boolean };
+import { eq } from "drizzle-orm";
+import { db } from "@/app/db";
+import { notes } from "@/app/db/schema";
 
-const notes: Note[] = [
-  { id: 1, content: "HTML is easy", important: true },
-  { id: 2, content: "Browser can execute only JavaScript", important: false },
-];
+export type Note = typeof notes.$inferSelect;
 
-export const getNotes = () => notes;
-
-export const getNote = (id: number) => notes.find((note) => note.id === id);
-
-export const addNote = (content: string, important: boolean) => {
-  const id = notes.length ? Math.max(...notes.map((n) => n.id)) + 1 : 1;
-  notes.push({ id, content, important });
+export const getNotes = async () => {
+  return await db.select().from(notes).orderBy(notes.id);
 };
-// services/notes.ts
 
-export const getNoteById = (id: number) => {
-  return notes.find((note) => note.id === id);
+export const getNote = async (id: number) => {
+  const [note] = await db.select().from(notes).where(eq(notes.id, id));
+  return note;
 };
-export const toggleImportance = (id: number) => {
-  const note = notes.find((note) => note.id === id);
+
+export const getNoteById = async (id: number) => {
+  return db.query.notes.findFirst({
+    where: eq(notes.id, id),
+  });
+};
+export const addNote = async (content: string, important: boolean) => {
+  await db.insert(notes).values({ content, important });
+};
+
+export const toggleImportance = async (id: number) => {
+  const note = await getNoteById(id);
   if (note) {
-    note.important = !note.important;
+    await db
+      .update(notes)
+      .set({ important: !note.important })
+      .where(eq(notes.id, id));
   }
 };
