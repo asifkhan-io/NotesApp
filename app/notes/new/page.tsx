@@ -1,26 +1,20 @@
 import { createNote } from "../../actions/notes";
 
-const NewNote = () => {
+export default function NewNotePage() {
   return (
     <div>
-      <h2>Create a new note</h2>
+      <h2>New note</h2>
       <form action={createNote}>
         <div>
-          <label>
-            Content
-            <input type='text' name='content' required />
-          </label>
+          <input name='content' placeholder='Write a note...' required />
         </div>
         <div>
           <label>
-            <input type='checkbox' name='important' />
-            Important
+            <input type='checkbox' name='important' /> Important
           </label>
         </div>
-        <button type='submit'>Create</button>
+        <button type='submit'>Add note</button>
       </form>
     </div>
   );
-};
-
-export default NewNote;
+}

@@ -17,11 +17,19 @@ async function NotesContent({
   return (
     <div>
       <h2>Notes</h2>
+
+      <div>
+        <Link href='/notes/new'>+ New note</Link>
+      </div>
+
       <div>
         <Link href={showImportant ? "/notes" : "/notes?important=true"}>
           {showImportant ? "show all" : "show important only"}
         </Link>
       </div>
+
+      {notes.length === 0 && <p>No notes yet.</p>}
+
       <ul>
         {notes.map((note) => (
           <li key={note.id}>
@@ -34,7 +42,7 @@ async function NotesContent({
   );
 }
 
-export default async function NotesPage({
+export default function NotesPage({
   searchParams,
 }: {
   searchParams: Promise<{ important?: string }>;

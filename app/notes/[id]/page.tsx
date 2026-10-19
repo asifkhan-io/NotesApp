@@ -1,36 +1,42 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getNoteById } from "../../services/notes";
+import { getNote } from "../../services/notes";
 import { toggleNoteImportance } from "../../actions/notes";
 
 async function NoteContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const note = await getNoteById(Number(id));
+  const noteId = Number(id);
+  if (Number.isNaN(noteId)) notFound();
 
-  if (!note) {
-    notFound();
-  }
+  const note = await getNote(noteId);
+  if (!note) notFound();
 
   return (
     <div>
-      <h2>{note.content}</h2>
-      <p>{note.important ? "Important" : "Not important"}</p>
+      <Link href='/notes'>← Back to notes</Link>
+      <h2>Note #{note.id}</h2>
+      <p>{note.content}</p>
+      <p>{note.important ? "Marked important" : "Not important"}</p>
+
       <form action={toggleNoteImportance}>
         <input type='hidden' name='id' value={note.id} />
         <button type='submit'>
-          {note.important ? "Mark as not important" : "Mark as important"}
+          {note.important ? "Unmark important" : "Mark important"}
         </button>
       </form>
     </div>
   );
 }
 
-const NotePage = ({ params }: { params: Promise<{ id: string }> }) => {
+export default function NotePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   return (
     <Suspense fallback={<div>Loading note...</div>}>
       <NoteContent params={params} />
     </Suspense>
   );
-};
-
-export default NotePage;
+}

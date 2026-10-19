@@ -1,11 +1,15 @@
 "use server";
+
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { addNote, toggleImportance } from "../services/notes";
-import { revalidatePath } from "next/cache";
 
 export const createNote = async (formData: FormData) => {
-  const content = formData.get("content") as string;
+  const content = String(formData.get("content") ?? "").trim();
   const important = formData.get("important") === "on";
+
+  if (!content) return;
+
   await addNote(content, important);
   revalidatePath("/notes");
   redirect("/notes");
