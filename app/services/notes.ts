@@ -1,11 +1,17 @@
 import { eq } from "drizzle-orm";
-import { db } from "@/app/db";
-import { notes } from "@/app/db/schema";
+import { db } from "../db";
+import { notes } from "../db/schema";
 
 export type Note = typeof notes.$inferSelect;
 
-export const getNotes = async () => {
-  return await db.select().from(notes).orderBy(notes.id);
+export const getNotes = async (importantOnly: boolean) => {
+  if (importantOnly) {
+    return db.query.notes.findMany({
+      where: eq(notes.important, true),
+    });
+  }
+
+  return db.query.notes.findMany();
 };
 
 export const getNote = async (id: number) => {
@@ -18,6 +24,7 @@ export const getNoteById = async (id: number) => {
     where: eq(notes.id, id),
   });
 };
+
 export const addNote = async (content: string, important: boolean) => {
   await db.insert(notes).values({ content, important });
 };

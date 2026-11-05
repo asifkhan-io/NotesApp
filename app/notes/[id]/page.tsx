@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getNote } from "../../services/notes";
+import { getNoteById } from "../../services/notes";
 import { toggleNoteImportance } from "../../actions/notes";
 
 async function NoteContent({ params }: { params: Promise<{ id: string }> }) {
@@ -9,7 +9,7 @@ async function NoteContent({ params }: { params: Promise<{ id: string }> }) {
   const noteId = Number(id);
   if (Number.isNaN(noteId)) notFound();
 
-  const note = await getNote(noteId);
+  const note = await getNoteById(noteId);
   if (!note) notFound();
 
   return (
