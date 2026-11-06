@@ -13,6 +13,8 @@ export default function RootLayout({
           {" | "}
           <Link href='/notes'>notes</Link>
           {" | "}
+          <Link href='/users'>Users</Link>
+          {" | "}
           <Link href='/notes/new'>create new</Link>
         </nav>
         {children}

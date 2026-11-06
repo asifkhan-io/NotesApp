@@ -2,16 +2,21 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addNote, toggleImportance } from "../services/notes";
+import {
+  createNote as createNoteService,
+  toggleImportance,
+} from "../services/notes";
 
 export const createNote = async (formData: FormData) => {
   const content = String(formData.get("content") ?? "").trim();
   const important = formData.get("important") === "on";
+  const userId = Number(formData.get("userId"));
 
-  if (!content) return;
+  if (!content || !Number.isInteger(userId) || userId <= 0) return;
 
-  await addNote(content, important);
+  await createNoteService(content, important, userId);
   revalidatePath("/notes");
+  revalidatePath(`/users/${userId}`);
   redirect("/notes");
 };
 

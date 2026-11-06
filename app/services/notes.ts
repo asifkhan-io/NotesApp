@@ -25,8 +25,12 @@ export const getNoteById = async (id: number) => {
   });
 };
 
-export const addNote = async (content: string, important: boolean) => {
-  await db.insert(notes).values({ content, important });
+export const createNote = async (
+  content: string,
+  important: boolean,
+  userId: number,
+) => {
+  await db.insert(notes).values({ content, important, userId });
 };
 
 export const toggleImportance = async (id: number) => {
