@@ -6,17 +6,31 @@ import {
   createNote as createNoteService,
   toggleImportance,
 } from "../services/notes";
+import { getCurrentUser } from "../services/session";
 
-export const createNote = async (formData: FormData) => {
+export const createNote = async (
+  _prevState: { error: string },
+  formData: FormData,
+) => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const content = String(formData.get("content") ?? "").trim();
+
+  if (!content || content.length < 10) {
+    return {
+      error: "Note content must be at least 10 characters long",
+    };
+  }
+
   const important = formData.get("important") === "on";
-  const userId = Number(formData.get("userId"));
 
-  if (!content || !Number.isInteger(userId) || userId <= 0) return;
-
-  await createNoteService(content, important, userId);
+  await createNoteService(content, important, user.id);
   revalidatePath("/notes");
-  revalidatePath(`/users/${userId}`);
+  revalidatePath(`/users/${user.id}`);
   redirect("/notes");
 };
 

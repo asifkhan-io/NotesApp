@@ -13,22 +13,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
+        if (
+          typeof credentials?.username !== "string" ||
+          typeof credentials?.password !== "string"
+        ) {
+          return null;
+        }
+
+        const username = credentials.username.trim();
+        if (!username || !credentials.password) {
           return null;
         }
 
         const user = await db.query.users.findFirst({
-          where: eq(users.username, credentials.username as string),
+          where: eq(users.username, username),
         });
 
         if (!user || !user.passwordHash) {
           return null;
         }
 
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.passwordHash,
-        );
+        const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
 
         if (!isValid) {
           return null;
@@ -45,6 +50,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
   },
+  secret: process.env.AUTH_SECRET ?? process.env.BETTER_AUTH_SECRET,
   session: {
     strategy: "jwt",
   },
