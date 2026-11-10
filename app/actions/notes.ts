@@ -23,6 +23,7 @@ export const createNote = async (
   if (!content || content.length < 10) {
     return {
       error: "Note content must be at least 10 characters long",
+      success: false,
     };
   }
 
@@ -39,4 +40,5 @@ export const toggleNoteImportance = async (formData: FormData) => {
   await toggleImportance(id);
   revalidatePath(`/notes/${id}`);
   revalidatePath("/notes");
+  return { errors: "", success: true };
 };
