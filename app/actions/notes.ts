@@ -2,14 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
 import {
   createNote as createNoteService,
   toggleImportance,
 } from "../services/notes";
+
 import { getCurrentUser } from "../services/session";
 
 export const createNote = async (
-  _prevState: { error: string },
+  _prevState: { error: string; success: boolean },
   formData: FormData,
 ) => {
   const user = await getCurrentUser();
@@ -30,15 +32,31 @@ export const createNote = async (
   const important = formData.get("important") === "on";
 
   await createNoteService(content, important, user.id);
+
   revalidatePath("/notes");
   revalidatePath(`/users/${user.id}`);
-  redirect("/notes");
+
+  return {
+    error: "",
+    success: true,
+  };
 };
 
 export const toggleNoteImportance = async (formData: FormData) => {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   const id = Number(formData.get("id"));
-  await toggleImportance(id);
+
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    return;
+  }
+
+  await toggleImportance(id, user.id);
+
   revalidatePath(`/notes/${id}`);
   revalidatePath("/notes");
-  return { errors: "", success: true };
 };

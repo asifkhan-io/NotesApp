@@ -7,13 +7,14 @@ export default function Notification() {
 
   if (!message) return null;
 
-  const style: React.CSSProperties = {
-    padding: "10px 16px",
-    marginBottom: "10px",
-    borderRadius: "4px",
-    color: "white",
-    backgroundColor: type === "success" ? "#16a34a" : "#dc2626",
-  };
-
-  return <div style={style}>{message}</div>;
+  return (
+    <div
+      role={type === "error" ? "alert" : "status"}
+      className={`mx-auto mt-4 max-w-2xl rounded px-4 py-3 text-white ${
+        type === "success" ? "bg-green-600" : "bg-red-600"
+      }`}
+    >
+      {message}
+    </div>
+  );
 }

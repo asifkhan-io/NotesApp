@@ -3,7 +3,7 @@ const Home = () => {
   return (
     <div>
       <div>
-        <h2>notes app</h2>
+        <h2 className='text-2xl font-bold text-blue-600'>notes app</h2>
         An example app for{" "}
         <a href='https://courses.mooc.fi/org/uh-cs/courses/full-stack-open-nextjs'>
           Full Stack Open Next.js

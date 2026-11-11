@@ -12,7 +12,7 @@ export default function RegisterPage() {
   return (
     <div>
       <h2>Register</h2>
-      <form action={formAction}>
+      <form action={formAction} className='register-form'>
         {state.error && <p style={{ color: "red" }}>{state.error}</p>}
         <div>
           <label>
